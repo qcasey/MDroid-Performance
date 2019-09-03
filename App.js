@@ -141,12 +141,6 @@ export default class App extends React.Component {
           <ScrollView removeClippedSubviews={true} style={styles.mainContainer}>
             <SensorsScreen />
           </ScrollView>
-          <ScrollView removeClippedSubviews={true} style={styles.mainContainer}>
-            <SystemScreen />
-      		</ScrollView>
-          <ScrollView removeClippedSubviews={true} style={styles.mainContainer}>
-            <DataScreen />
-          </ScrollView>
         </Swiper>
         <View style={styles.viewBlocker} />
       </View>
