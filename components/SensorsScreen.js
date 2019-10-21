@@ -50,8 +50,6 @@ export default class SensorScreen extends React.Component {
         auxVoltage: ("AUX_VOLTAGE" in sessionObject && "value" in sessionObject["AUX_VOLTAGE"]) ? sessionObject["AUX_VOLTAGE"]["value"] : this.state.auxVoltage,
         coolantTemp: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolantTemp,
         outsideTemp:  ("OUTSIDE_TEMP" in sessionObject && "value" in sessionObject["OUTSIDE_TEMP"]) ? sessionObject["OUTSIDE_TEMP"]["value"] : this.state.outsideTemp,
-        lucio: "Online", // Since we just fetched from lucio
-        jaina: ("JAINA_CONNECTION" in sessionObject && "value" in sessionObject["JAINA_CONNECTION"]) ? sessionObject["JAINA_CONNECTION"]["value"] : "Offline",
       });
 
       // Ask for another update
@@ -111,8 +109,6 @@ export default class SensorScreen extends React.Component {
         auxVoltage: "N/A",
         coolantTemp: "N/A",
         outsideTemp: "N/A",
-        jaina: "Offline",
-        lucio: "Offline",
         toasted: 0
       };
     }
@@ -162,10 +158,6 @@ export default class SensorScreen extends React.Component {
     				<View style={[styles.container, styles.containerPaddingRight, styles.colContainer, styles.alignTop]}>
     					<Text style={styles.auxText}>Outside Temp: {(this.state.outsideTemp == "N/A") ? "N/A" : Math.round(this.CToF(this.state.outsideTemp))+"F"}</Text>
     					<Text style={styles.auxText}>Coolant Temp: {(this.state.outsideTemp == "N/A") ? "N/A" : this.state.coolantTemp+"C"}</Text>
-    				</View>
-    				<View style={[styles.container, styles.containerPaddingLeft, styles.colContainer, styles.alignTop]}>
-    					<Text style={styles.auxText}>Lucio: {this.state.lucio}</Text>
-    					<Text style={styles.auxText}>Jaina: {this.state.jaina}</Text>
     				</View>
     			</View>
         </View>
