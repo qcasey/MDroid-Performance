@@ -42,86 +42,48 @@ export default class App extends React.Component {
 
     // Responsive styling
     var {height, width} = Dimensions.get('window');
-    var styles;
-    var image;
+    var isVertical = height < width;
 
-    if(height < width) {
-      //
-      // LANDSCAPE
-      //
-      image = require('./assets/images/3-rotated.png');
-      styles = StyleSheet.create({
-        container: {
-        	backgroundColor: '#000',
-          height: hp('100%'),
-          width: wp('100%'),
-          maxHeight: 650,
-          flexDirection: 'row',
-        },
-        swiperContainer: {
-          marginTop: 30,
-        },
-        imageContainer: {
-          width: wp('30%'),
-          height: hp('80%'),
-        	marginTop: hp('15%'),
-          color: "#FFF",
-          flexDirection: 'row',
-          zIndex: 2
-        },
-        mainLeftImage: {
-        	height: hp('80%'),
-          width: wp('20%'),
-          marginLeft: wp('7.5%'),
-        	flexDirection: 'column',
-          resizeMode:'contain'
-        },
-        mainContainer: {
-        	width: wp('70%'),
-          height: hp('60%'),
-        },
-        viewBlocker: {
-          backgroundColor: '#000000',
-          width: wp('30%'),
-          height: hp('100%'),
-          left: 0,
-          position: 'absolute'
-        }
-      });
-    } else {
-      //
-      // PORTRAIT
-      //
-      image = require('./assets/images/1.png');
-      styles = StyleSheet.create({
-        container: {
-          backgroundColor: '#000',
-          height: hp('100%'),
-          width: wp('100%'),
-          flexDirection: 'column',
-        },
-        swiperContainer: {
-          marginTop: 30
-        },
-        imageContainer: {
-          width: wp('80%'),
-          marginTop: hp('5%'),
-          marginLeft: wp('10%'),
-          color: "#FFF",
-          flexDirection: 'row',
-        },
-        mainLeftImage: {
-          width: wp('80%'),
-          height: hp('20%'),
-          flexDirection: 'column',
-          resizeMode:'contain'
-        },
-        mainContainer: {
-          width: wp('100%'),
-          height: hp('60%'),
-        }
-      });
-    }
+    var image = isVertical ? require('./assets/images/3-rotated.png') : require('./assets/images/1.png');
+    var styles = StyleSheet.create({
+      container: {
+        backgroundColor: '#000',
+        height: hp('100%'),
+        width: wp('100%'),
+        maxHeight: isVertical ? 650 : "none",
+        flexDirection: isVertical ? 'row' : 'column',
+      },
+      swiperContainer: {
+        marginTop: 30,
+      },
+      imageContainer: {
+        width: isVertical ? wp('30%') : wp('80%'),
+        height: isVertical ? hp('80%') : hp('100%'),
+        marginTop: isVertical ? hp('10%') : hp('5%'),
+        marginLeft: isVertical ? 0 : wp('10%'),
+        color: "#FFF",
+        flexDirection: 'row',
+        zIndex: 2
+      },
+      mainLeftImage: {
+        height: hp('80%'),
+        width: wp('20%'),
+        marginLeft: isVertical ? wp('7.5%') : 0,
+        flexDirection: 'column',
+        resizeMode:'contain'
+      },
+      mainContainer: {
+        width: isVertical ? wp('70%') : wp('100%'),
+        height: hp('60%'),
+      },
+      viewBlocker: {
+        backgroundColor: '#000000',
+        width: wp('30%'),
+        height: hp('100%'),
+        left: 0,
+        position: 'absolute'
+      }
+    });
 
     console.log(JSON.stringify(this.props));
     return (
