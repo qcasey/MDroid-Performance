@@ -13,66 +13,36 @@ export default class SensorsBar extends React.Component {
 	}
 
 	render() {
-    // Responsive styling
-    var {height, width} = Dimensions.get('window');
-    var styles;
-    var barHeight;
+		// Responsive styling
+		var {height, width} = Dimensions.get('window');
+		var isVertical = height < width;
 
-    if(height < width) {
-      styles = StyleSheet.create({
-      	barTextContainer: {
-      		flexDirection: 'row',
-      		flex: 1,
-          paddingBottom: 5,
-      		alignContent:"space-between",
-      	},
-      	barText: {
-      		fontSize: 20,
-      		color: '#fff',
-      		fontFamily: "orbitron-medium",
-      		flex: 2,
-      	},
-      	barTextValue: {
-      		fontSize: 20,
-      		color: '#fff',
-      		fontFamily: "orbitron-medium",
-      		flex: 1,
-      		textAlign: "right",
-      	},
-      	barOuterContainer: {
-      		flexDirection:"row",
-      		borderColor: "#FF5722",
-      		borderWidth: 2,
-      	}
-      });
-    } else {
-      styles = StyleSheet.create({
-        barTextContainer: {
-          flexDirection: 'row',
-          flex: 1,
-          paddingBottom: 5,
-          alignContent:"space-between",
-        },
-        barText: {
-          fontSize: 16,
-          color: '#fff',
-          fontFamily: "orbitron-medium",
-          flex: 2,
-        },
-        barTextValue: {
-          fontSize: 16,
-          color: '#fff',
-          fontFamily: "orbitron-medium",
-          flex: 1,
-          textAlign: "right",
-        },
-        barOuterContainer: {
-          flexDirection:"row",
-          borderColor: "#FF5722",
-          borderWidth: 2,
-        }
-      });
-    }
+		var styles = StyleSheet.create({
+		barTextContainer: {
+			flexDirection: 'row',
+			flex: 1,
+			paddingBottom: 5,
+			alignContent:"space-between",
+		},
+		barText: {
+			fontSize: isVertical ? 20 : 16,
+			color: '#fff',
+			fontFamily: "orbitron-medium",
+			flex: 2,
+		},
+		barTextValue: {
+			fontSize: isVertical ? 20 : 16,
+			color: '#fff',
+			fontFamily: "orbitron-medium",
+			flex: 1,
+			textAlign: "right",
+		},
+		barOuterContainer: {
+			flexDirection:"row",
+			borderColor: "#FF5722",
+			borderWidth: 2,
+		}
+		});
 
 
 		this.state = { status: this.props.status };
