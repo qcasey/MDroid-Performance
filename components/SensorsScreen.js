@@ -45,11 +45,7 @@ export default class SensorScreen extends React.Component {
         rpm: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? Math.round(sessionObject["RPM"]["value"]) : this.state.rpm,
         speed: ("SPEED" in sessionObject && "value" in sessionObject["SPEED"]) ? Math.round(sessionObject["SPEED"]["value"]/1.609) : this.state.speed,
         torque: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? ((sessionObject["RPM"]["value"] > 0) ? (Math.round(333*5252/sessionObject["RPM"]["value"])*100)/100 : 0) : this.state.torque, // holy ternary batman, avoid divide by 0
-        fuel: ("FUEL_LEVEL" in sessionObject && "value" in sessionObject["FUEL_LEVEL"]) ? sessionObject["FUEL_LEVEL"]["value"] : this.state.fuel,
-        mainVoltage: ("MAIN_VOLTAGE" in sessionObject && "value" in sessionObject["MAIN_VOLTAGE"]) ? sessionObject["MAIN_VOLTAGE"]["value"] : this.state.mainVoltage,
-        auxVoltage: ("AUX_VOLTAGE" in sessionObject && "value" in sessionObject["AUX_VOLTAGE"]) ? sessionObject["AUX_VOLTAGE"]["value"] : this.state.auxVoltage,
         coolantTemp: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolantTemp,
-        outsideTemp:  ("OUTSIDE_TEMP" in sessionObject && "value" in sessionObject["OUTSIDE_TEMP"]) ? sessionObject["OUTSIDE_TEMP"]["value"] : this.state.outsideTemp,
       });
 
       // Ask for another update
@@ -84,34 +80,14 @@ export default class SensorScreen extends React.Component {
 	constructor(props) {
 		super(props);
     
-    if (global.demoMode) {
-      this.state = {
-        rpm: "3600",
-        torque: "2000",
-        speed: "32",
-        fuel: 850,
-        mainVoltage: "13.6",
-        auxVoltage: "13.6",
-        coolantTemp: "83",
-        outsideTemp: "104",
-        jaina: "Online",
-        lucio: "Online",
-        toasted: 0
-      };
-    } else {
-      this.createWebsocket();
-      this.state = {
-        rpm: "N/A",
-        torque: "N/A",
-        speed: "N/A",
-        fuel: "N/A",
-        mainVoltage: "N/A",
-        auxVoltage: "N/A",
-        coolantTemp: "N/A",
-        outsideTemp: "N/A",
-        toasted: 0
-      };
-    }
+    this.createWebsocket();
+    this.state = {
+      rpm: "N/A",
+      torque: "N/A",
+      speed: "N/A",
+      coolantTemp: "N/A",
+      toasted: 0
+    };
 	}
 
 	// Kilometers to miles
@@ -143,21 +119,13 @@ export default class SensorScreen extends React.Component {
     				<Text style={styles.mainTitleText}>Performance</Text>
     			</View>
     			<View style={[styles.largeContainer]}>
+            <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
+              <SensorBar barHeight={barHeight} title="Speed" align="Right" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
+              <SensorBar barHeight={barHeight} title="Coolant" align="Right" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
+    				</View>
     				<View style={[styles.container, styles.containerPadding, styles.colContainer]}>
     					<SensorBar barHeight={barHeight} title="RPM" align="Right" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
     					<SensorBar barHeight={barHeight} title="Torque" align="Right" val={this.state.torque} fill={(this.state.torque == "N/A") ? "0" : 100*(this.state.torque/7000)} />
-    					<SensorBar barHeight={barHeight} title="Speed" align="Right" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
-    				</View>
-    				<View style={[styles.container, styles.containerPadding, styles.colContainer]}>
-    					<SensorBar barHeight={barHeight} title="Fuel" align="Left" val={(this.state.fuel == "N/A") ? "N/A" : Math.round(100*this.state.fuel/7000)+"%"} fill={(this.state.fuel == "N/A") ? "0" : 100*(this.state.fuel/7000)} />
-    					<SensorBar barHeight={barHeight} title={height < width ? "Main Voltage" : "Main Volt."} align="Left" val={(this.state.mainVoltage == "N/A") ? "N/A" : this.state.mainVoltage+"V"} fill={(this.state.mainVoltage == "N/A") ? "0" : 100*(this.state.mainVoltage/13.6)} />
-    					<SensorBar barHeight={barHeight} title={height < width ? "Aux Voltage" : "Aux Volt."} align="Left" val={(this.state.auxVoltage == "N/A") ? "N/A" : this.state.auxVoltage+"V"} fill={(this.state.auxVoltage == "N/A") ? "0" : 100*(this.state.auxVoltage/13.6)} />
-    				</View>
-    			</View>
-    			<View style={[styles.container, styles.containerPadding, styles.alignTop]}>
-    				<View style={[styles.container, styles.containerPaddingRight, styles.colContainer, styles.alignTop]}>
-    					<Text style={styles.auxText}>Outside Temp: {(this.state.outsideTemp == "N/A") ? "N/A" : Math.round(this.CToF(this.state.outsideTemp))+"F"}</Text>
-    					<Text style={styles.auxText}>Coolant Temp: {(this.state.outsideTemp == "N/A") ? "N/A" : this.state.coolantTemp+"C"}</Text>
     				</View>
     			</View>
         </View>

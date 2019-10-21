@@ -14,8 +14,6 @@ import Swiper from 'react-native-swiper';
 
 // Screens
 import SensorsScreen from './components/SensorsScreen.js';
-import SystemScreen from './components/SystemScreen.js';
-import DataScreen from './components/DataScreen.js';
 
 import {serverHost} from './config.json';
 
