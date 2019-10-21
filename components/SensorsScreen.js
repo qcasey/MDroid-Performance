@@ -104,31 +104,25 @@ export default class SensorScreen extends React.Component {
 
     // Responsive styling
     var {height, width} = Dimensions.get('window');
-    var barHeight;
+    var barHeight = (height < width) ? 50 : 30;
     var styles = reloadStyles();
 
-    if(height < width) {
-      barHeight = 50;
-    } else {
-      barHeight = 30;
-    }
-
 		return (
-        <View>
-    			<View style={[styles.container, styles.containerPadding, styles.titleContainer]}>
-    				<Text style={styles.mainTitleText}>Performance</Text>
-    			</View>
-    			<View style={[styles.largeContainer]}>
-            <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
-              <SensorBar barHeight={barHeight} title="Speed" align="Right" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
-              <SensorBar barHeight={barHeight} title="Coolant" align="Right" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
-    				</View>
-    				<View style={[styles.container, styles.containerPadding, styles.colContainer]}>
-    					<SensorBar barHeight={barHeight} title="RPM" align="Right" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
-    					<SensorBar barHeight={barHeight} title="Torque" align="Right" val={this.state.torque} fill={(this.state.torque == "N/A") ? "0" : 100*(this.state.torque/7000)} />
-    				</View>
-    			</View>
+      <View>
+        <View style={[styles.container, styles.containerPadding, styles.titleContainer]}>
+          <Text style={styles.mainTitleText}>Performance</Text>
         </View>
+        <View style={[styles.largeContainer]}>
+          <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
+            <SensorBar barHeight={barHeight} title="Speed" align="Right" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
+            <SensorBar barHeight={barHeight} title="Coolant" align="Right" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
+          </View>
+          <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
+            <SensorBar barHeight={barHeight} title="RPM" align="Right" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
+            <SensorBar barHeight={barHeight} title="Torque" align="Right" val={this.state.torque} fill={(this.state.torque == "N/A") ? "0" : 100*(this.state.torque/7000)} />
+          </View>
+        </View>
+      </View>
 		);
   	}
 }
