@@ -4,7 +4,8 @@ import {
   Text,
   View,
   ToastAndroid,
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -23,6 +24,7 @@ import {
   ContributionGraph,
   StackedBarChart
 } from "react-native-chart-kit";
+let timeout;
 
 export default class SensorScreen extends React.Component {
   componentDidMount() {
@@ -31,6 +33,7 @@ export default class SensorScreen extends React.Component {
 
   componentWillUnMount() {
     rol();
+    clearTimeout(timeout);
   }
 
   createWebsocket() {
@@ -44,11 +47,14 @@ export default class SensorScreen extends React.Component {
         ToastAndroid.show("Reconnected to data server.", ToastAndroid.SHORT);
         this.setState({toasted: 0}); // reset error message
       }
+      timeout = setInterval(() => {
+        this.ws.send('OK'); // send a message
+      }, 100);
     };
 
     this.ws.onmessage = (e) => {
       // a message was received
-      console.log(e.data);
+      //console.log(e.data);
       var sessionObject = JSON.parse(e.data)
       this.setState({
         rpm: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? Math.round(sessionObject["RPM"]["value"]) : this.state.rpm,
@@ -57,12 +63,9 @@ export default class SensorScreen extends React.Component {
         coolantTemp: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolantTemp,
       });
 
-      this.appendRPM(Math.random() * 100);
-
-      // Ask for another update
-      setTimeout(() => {
-        this.ws.send('OK'); // send a message
-      }, 50);
+      if(this.state[this.chartName] != "N/A") {
+        this.appendRPM(this.state[this.chartName]);
+      }
     };
 
     this.ws.onerror = (e) => {
@@ -108,7 +111,27 @@ export default class SensorScreen extends React.Component {
     };
 
     this.data = [0];
-	}
+    this.chartName = "rpm";
+  }
+  
+  _cycleChartData() {
+    if(this.chartName == "rpm") {
+      this.chartName = "speed";
+    } else if(this.chartName == "speed") {
+      this.chartName = "torque";
+    } else if(this.chartName == "torque") {
+      this.chartName = "coolant";
+    } else if(this.chartName == "coolant") {
+      this.chartName = "rpm";
+    } else {
+      this.chartName = "rpm";
+    }
+
+    // Reset data
+    this.data = [0];
+    this.setState({toasted: 0});
+    console.log(this.chartName);
+  }
 
 	// Kilometers to miles
 	kmToMi(km) {
@@ -133,7 +156,8 @@ export default class SensorScreen extends React.Component {
           <Text style={styles.mainTitleText}>Performance</Text>
         </View>
 
-        <View style={[styles.container, styles.containerPadding, {paddingBottom: 25, paddingTop: 35}]}>
+        <TouchableOpacity onPress={() => this._cycleChartData()} style={[styles.container, styles.containerPadding, {flexDirection: 'column', paddingBottom: 25, paddingTop: 25}]}>
+          <Text style={{color: "#FFF"}}>{this.chartName.toUpperCase()}</Text>
           <LineChart
             data={{
               datasets: [
@@ -147,7 +171,7 @@ export default class SensorScreen extends React.Component {
             withShadow={true}
             withOuterLines={false}
             width={wp('62%')} // from react-native
-            height={220}
+            height={240}
             chartConfig={{
               decimalPlaces: 2, // optional, defaults to 2dp
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -167,7 +191,7 @@ export default class SensorScreen extends React.Component {
               borderRadius: 16
             }}
           />
-        </View>
+        </TouchableOpacity>
 
         <View style={[styles.largeContainer]}>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
