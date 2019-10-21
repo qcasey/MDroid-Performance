@@ -60,7 +60,7 @@ export default class SensorScreen extends React.Component {
         rpm: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? Math.round(sessionObject["RPM"]["value"]) : this.state.rpm,
         speed: ("SPEED" in sessionObject && "value" in sessionObject["SPEED"]) ? Math.round(sessionObject["SPEED"]["value"]/1.609) : this.state.speed,
         torque: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? ((sessionObject["RPM"]["value"] > 0) ? (Math.round(333*5252/sessionObject["RPM"]["value"])*100)/100 : 0) : this.state.torque, // holy ternary batman, avoid divide by 0
-        coolantTemp: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolantTemp,
+        coolant: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolant,
       });
 
       if(this.state[this.chartName] != "N/A") {
@@ -106,7 +106,7 @@ export default class SensorScreen extends React.Component {
       rpm: "N/A",
       torque: "N/A",
       speed: "N/A",
-      coolantTemp: "N/A",
+      coolant: "N/A",
       toasted: 0
     };
 
@@ -196,7 +196,7 @@ export default class SensorScreen extends React.Component {
         <View style={[styles.largeContainer]}>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
             <SensorBar barHeight={barHeight} title="Speed" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
-            <SensorBar barHeight={barHeight} title="Coolant" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
+            <SensorBar barHeight={barHeight} title="Coolant" val={this.state.coolant} fill={(this.state.coolant == "N/A") ? "0" : 100*(this.state.coolant/135)} />
           </View>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
             <SensorBar barHeight={barHeight} title="RPM" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
