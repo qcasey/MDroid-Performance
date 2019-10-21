@@ -15,6 +15,15 @@ import {
 import SensorBar from './SensorBar';
 import styles from '../assets/screenStyles.js';
 
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart
+} from "react-native-chart-kit";
+
 export default class SensorScreen extends React.Component {
   componentDidMount() {
     loc(this);
@@ -48,6 +57,8 @@ export default class SensorScreen extends React.Component {
         coolantTemp: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolantTemp,
       });
 
+      this.appendRPM(Math.random() * 100);
+
       // Ask for another update
       setTimeout(() => {
         this.ws.send('OK'); // send a message
@@ -77,6 +88,13 @@ export default class SensorScreen extends React.Component {
     };
   }
 
+  appendRPM(rpm) {
+    this.data.push(rpm);
+    if(this.data.length > 70) {
+      this.data.shift();
+    }
+  }
+
 	constructor(props) {
 		super(props);
     
@@ -88,6 +106,8 @@ export default class SensorScreen extends React.Component {
       coolantTemp: "N/A",
       toasted: 0
     };
+
+    this.data = [0];
 	}
 
 	// Kilometers to miles
@@ -112,6 +132,43 @@ export default class SensorScreen extends React.Component {
         <View style={[styles.container, styles.containerPadding, styles.titleContainer]}>
           <Text style={styles.mainTitleText}>Performance</Text>
         </View>
+
+        <View style={[styles.container, styles.containerPadding, {paddingBottom: 25, paddingTop: 35}]}>
+          <LineChart
+            data={{
+              datasets: [
+                {
+                  data: this.data
+                }
+              ]
+            }}
+            withInnerLines={false}
+            fromZero={true}
+            withShadow={true}
+            withOuterLines={false}
+            width={wp('62%')} // from react-native
+            height={220}
+            chartConfig={{
+              decimalPlaces: 2, // optional, defaults to 2dp
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: "1",
+                strokeWidth: "2",
+                stroke: "#ff5722"
+              },
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
+        </View>
+
         <View style={[styles.largeContainer]}>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
             <SensorBar barHeight={barHeight} title="Speed" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />

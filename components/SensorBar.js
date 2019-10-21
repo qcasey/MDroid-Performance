@@ -63,7 +63,7 @@ export default class SensorsBar extends React.Component {
 					</View>
 					<View style={[styles.barOuterContainer, {height: Number.parseInt(this.props.barHeight, 10)}]}>
 						<View style={[styles.barBorder, {width: 100-redlineLength+"%"}]}><View style={{height: Number.parseInt(this.props.barHeight, 10)-4, width: fillPercent, backgroundColor: "#FF5722"}}></View></View>
-						<View style={{ height: Number.parseInt(this.props.barHeight, 10), width: redlineLength+"%",  backgroundColor: "#FB334C"}}></View>
+						<View style={{ height: Number.parseInt(this.props.barHeight, 10), width: redlineLength+"%",  backgroundColor: "#cc0000"}}></View>
 					</View>
 				</View>
 			</View>

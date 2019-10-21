@@ -75,7 +75,7 @@ reloadStyles = function() {
         fontSize: 40,
         color: '#FF5722',
         fontFamily: "orbitron-medium",
-        textAlign: 'left'
+        textAlign: 'center'
       },
       auxText: {
         color: '#fff',
