@@ -114,12 +114,12 @@ export default class SensorScreen extends React.Component {
         </View>
         <View style={[styles.largeContainer]}>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
-            <SensorBar barHeight={barHeight} title="Speed" align="Right" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
-            <SensorBar barHeight={barHeight} title="Coolant" align="Right" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
+            <SensorBar barHeight={barHeight} title="Speed" val={this.state.speed} fill={(this.state.speed == "N/A") ? "0" : 100*(this.state.speed/135)} />
+            <SensorBar barHeight={barHeight} title="Coolant" val={this.state.coolantTemp} fill={(this.state.coolantTemp == "N/A") ? "0" : 100*(this.state.coolantTemp/135)} />
           </View>
           <View style={[styles.container, styles.containerPadding, styles.colContainer]}>
-            <SensorBar barHeight={barHeight} title="RPM" align="Right" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
-            <SensorBar barHeight={barHeight} title="Torque" align="Right" val={this.state.torque} fill={(this.state.torque == "N/A") ? "0" : 100*(this.state.torque/7000)} />
+            <SensorBar barHeight={barHeight} title="RPM" val={this.state.rpm} fill={(this.state.rpm == "N/A") ? "0" : 100*(this.state.rpm/8500)} />
+            <SensorBar barHeight={barHeight} title="Torque" val={this.state.torque} fill={(this.state.torque == "N/A") ? "0" : 100*(this.state.torque/7000)} />
           </View>
         </View>
       </View>
