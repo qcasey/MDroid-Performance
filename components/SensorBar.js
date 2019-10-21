@@ -39,8 +39,11 @@ export default class SensorsBar extends React.Component {
 		},
 		barOuterContainer: {
 			flexDirection:"row",
+		},
+		barBorder: {
 			borderColor: "#FF5722",
 			borderWidth: 2,
+			borderRightWidth: 0,
 		}
 		});
 
@@ -48,7 +51,7 @@ export default class SensorsBar extends React.Component {
 		this.state = { status: this.props.status };
 
 		// Get lengths
-		redlineLength = 10;
+		redlineLength = 15;
 		fillPercent = (this.props.fill > 100) ? "100%" : Math.round(this.props.fill)+"%"; // correct any extreme values
 
 		return (
@@ -59,8 +62,8 @@ export default class SensorsBar extends React.Component {
 						<Text style={styles.barTextValue}>{this.props.val}</Text>
 					</View>
 					<View style={[styles.barOuterContainer, {height: Number.parseInt(this.props.barHeight, 10)}]}>
-						<View style={{width: 100-redlineLength+"%"}}><View style={{height: Number.parseInt(this.props.barHeight, 10)-4, width: fillPercent, backgroundColor: "#FF5722"}}></View></View>
-						<View style={{ height: Number.parseInt(this.props.barHeight, 10)-4, width: redlineLength+"%",  backgroundColor: "#FB334C"}}></View>
+						<View style={[styles.barBorder, {width: 100-redlineLength+"%"}]}><View style={{height: Number.parseInt(this.props.barHeight, 10)-4, width: fillPercent, backgroundColor: "#FF5722"}}></View></View>
+						<View style={{ height: Number.parseInt(this.props.barHeight, 10), width: redlineLength+"%",  backgroundColor: "#FB334C"}}></View>
 					</View>
 				</View>
 			</View>
