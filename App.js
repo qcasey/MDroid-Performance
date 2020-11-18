@@ -15,10 +15,12 @@ import Swiper from 'react-native-swiper';
 // Screens
 import SensorsScreen from './components/SensorsScreen.js';
 
-import {serverHost} from './config.json';
+import {serverHost, user, pass} from './config.json';
 
 // Config
 global.SERVER_HOST = serverHost;
+global.USER = user;
+global.PASS = pass;
 
 // Globals
 global.buttonColorOn = "#FF5722";
@@ -50,7 +52,7 @@ export default class App extends React.Component {
         backgroundColor: '#000',
         height: hp('100%'),
         width: wp('100%'),
-        maxHeight: isVertical ? 650 : "none",
+        maxHeight: isVertical ? 650 : 3500,
         flexDirection: isVertical ? 'row' : 'column',
       },
       swiperContainer: {
@@ -93,7 +95,7 @@ export default class App extends React.Component {
     			<Image style={styles.mainLeftImage} source={image} />
     		</View>
         <Swiper
-          index="0"
+          index={0}
           style={styles.swiperContainer}
           showsPagination={true}
           dotColor='rgba(255,255,255,.2)'

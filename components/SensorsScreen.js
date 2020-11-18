@@ -15,6 +15,7 @@ import {
 } from 'react-native-responsive-screen';
 import SensorBar from './SensorBar';
 import styles from '../assets/screenStyles.js';
+import MQTT from 'sp-react-native-mqtt';
 
 import {
   LineChart,
@@ -24,7 +25,6 @@ import {
   ContributionGraph,
   StackedBarChart
 } from "react-native-chart-kit";
-let timeout;
 
 export default class SensorScreen extends React.Component {
   componentDidMount() {
@@ -37,61 +37,84 @@ export default class SensorScreen extends React.Component {
   }
 
   createWebsocket() {
-    this.ws = new WebSocket('ws://'+global.SERVER_HOST+'/session/socket');
 
-    // Initiate communication
-    this.ws.onopen = () => {
-      // connection opened
-      this.ws.send('OK'); // send a message
-      if(this.state.toasted) {
-        ToastAndroid.show("Reconnected to data server.", ToastAndroid.SHORT);
-        this.setState({toasted: 0}); // reset error message
-      }
-      timeout = setInterval(() => {
-        this.ws.send('OK'); // send a message
-      }, 100);
-    };
+    let component = this;
 
-    this.ws.onmessage = (e) => {
-      // a message was received
-      //console.log(e.data);
-      var sessionObject = JSON.parse(e.data)
-      this.setState({
-        rpm: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? Math.round(sessionObject["RPM"]["value"]) : this.state.rpm,
-        speed: ("SPEED" in sessionObject && "value" in sessionObject["SPEED"]) ? Math.round(sessionObject["SPEED"]["value"]/1.609) : this.state.speed,
-        torque: ("RPM" in sessionObject && "value" in sessionObject["RPM"]) ? ((sessionObject["RPM"]["value"] > 0) ? (Math.round(333*5252/sessionObject["RPM"]["value"])*100)/100 : 0) : this.state.torque, // holy ternary batman, avoid divide by 0
-        coolant: ("COOLANT_TEMP" in sessionObject && "value" in sessionObject["COOLANT_TEMP"]) ? sessionObject["COOLANT_TEMP"]["value"] : this.state.coolant,
+    /* create mqtt client */
+    MQTT.createClient({
+      uri: global.SERVER_HOST,
+      clientId: 'mdroid-performance',
+      user: global.USER,
+      pass: global.PASS,
+      auth: true,
+    }).then(function(client) {
+
+      client.on('closed', function() {
+        console.warn('mqtt.event.closed');
+        client.reconnect();
       });
 
-      if(this.state[this.chartName] != "N/A") {
-        this.appendRPM(this.state[this.chartName]);
-      }
-    };
+      client.on('error', function(msg) {
+        console.warn('mqtt.event.error', msg);
+        ToastAndroid.show('MQTT error: ' + msg, ToastAndroid.SHORT);
+        client.reconnect();
+      });
 
-    this.ws.onerror = (e) => {
-      // an error occurred
-      console.log(e.message);
-      console.log(e.reason);
-      if(!this.state.toasted) {
-        this.setState({toasted: 1});
-        ToastAndroid.show("Failed to fetch sensor data: "+e.message, ToastAndroid.SHORT);
-      }
-      this.ws.close();
-    };
+      client.on('message', function(msg) {
+        const parsedTopic = (msg.topic.replace(`vehicle/session/`, "")).split('/');
 
-    this.ws.onclose = (e) => {
-      // connection closed
-      console.log(e.code, e.reason);
-      ToastAndroid.show("Websocket closed: "+e.message, ToastAndroid.SHORT);
+        console.log(msg);
 
-      // Try reconnecting
-      setTimeout(() => {
-        this.createWebsocket();
-      }, 15000);
-    };
+        switch(parsedTopic[0]) {
+          case "RPM":
+            let newRPM = Math.round(parseFloat(msg.data));
+            component.setState({
+              ...component.state,
+              rpm: newRPM,
+              torque: ((newRPM > 0) ? (Math.round(333*5252/newRPM)*100)/100 : 0)
+            });
+            if(component.chartName == "rpm") {
+              component.appendRPM(component.state[component.chartName]);
+            }
+            break;
+          case "SPEED":
+            component.setState({
+              ...component.state,
+              speed: Math.round(parseFloat(msg.data)/1.609)
+            });
+            break;
+          case "COOLANT_TEMP":
+            component.setState({
+              ...component.state,
+              coolant: parseFloat(msg.data)
+            });
+            break;
+          default:
+            console.warn("Unhandled msg: ", msg);
+            break;
+        }   
+      });
+
+      client.on('connect', function() {
+        console.log('connected');
+        client.subscribe('vehicle/session/SPEED', 0);
+        client.subscribe('vehicle/session/RPM', 0);
+        client.subscribe('vehicle/session/COOLANT_TEMP', 0);
+
+        component.setState({
+          isConnected: true,
+          connectingOverlayHidden: true,
+        })
+      });
+
+      client.connect();
+    }).catch(function(err){
+      console.warn(err);
+    });
   }
 
   appendRPM(rpm) {
+    console.log(this.data);
     this.data.push(rpm);
     if(this.data.length > 70) {
       this.data.shift();
@@ -112,9 +135,11 @@ export default class SensorScreen extends React.Component {
 
     this.data = [0];
     this.chartName = "rpm";
+    this.timeout = undefined;
   }
   
   _cycleChartData() {
+    return;
     if(this.chartName == "rpm") {
       this.chartName = "speed";
     } else if(this.chartName == "speed") {
@@ -156,7 +181,7 @@ export default class SensorScreen extends React.Component {
           <Text style={styles.mainTitleText}>Performance</Text>
         </View>
 
-        <TouchableOpacity onPress={() => this._cycleChartData()} style={[styles.container, styles.containerPadding, {flexDirection: 'column', paddingBottom: 25, paddingTop: 25}]}>
+        <TouchableOpacity onPress={() => this._cycleChartData()} style={[styles.container, styles.containerPadding, {flexDirection: 'column', paddingBottom: 15, paddingTop: 10}]}>
           <Text style={{color: "#FFF"}}>{this.chartName.toUpperCase()}</Text>
           <LineChart
             data={{
